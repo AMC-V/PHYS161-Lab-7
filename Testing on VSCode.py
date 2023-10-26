@@ -29,6 +29,8 @@ B_label = vp.label(pos=POI, text="mT", color = B_tot_arrow.color, xoffset=20, yo
 current_label = vp.label(pos=vp.vec(0.85*x_min, 0.15*x_max, 0), color = vp.vec(1, 0.1, 0.1), text="I", border=0, box=False, 
                          line=False)
 
+print("h")
+
 for x in vp.arange(x_min, x_max, dx):
     vp.rate(2)
     
