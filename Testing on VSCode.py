@@ -1,7 +1,6 @@
 import vpython as vp
 
 # region Constants 
-
 POI = vp.vec(0, 3, 0)  # Our point of interest, Specific place we care about
 x_min = -10          # Left side of the wire
 x_max = 10           # Right side of the wire
@@ -18,16 +17,15 @@ dx = length/N              # loops per lenght
 constant = mu_0*current/4/vp.pi   # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
 # endregion 
 
-
+# region B field arrow Creation
 B_tot = vp.vec(0,0,0)
-B_tot_arrow = vp.arrow( pos=POI, axis=B_tot*scale_factor, color=vp.vec(0.4, 0.4, 1))
+B_tot_arrow = vp.arrow(pos = POI, axis = B_tot*scale_factor, color = vp.vec(0.4, 0.4, 1)) # Arrow will be updated in loop
 
-B_label = vp.label(pos=POI, text="mT", xoffset=20, yoffset=-20, border=0, box=False, line=False)
-#B_label.text = f"<i>B<sub>tot</sub></i> =  {1e3*B_tot.mag:.2f} mT"
-B_label.color = B_tot_arrow.color
+B_label = vp.label(pos=POI, text="mT", color = B_tot_arrow.color, xoffset=20, yoffset=-20, border=0, box=False, line=False)
+# endregion
 
-current_label = vp.label(pos=vp.vec(0.85*x_min, 0.15*x_max, 0), text="I", border=0, box=False, line=False)
-current_label.color = vp.vec(1, 0.1, 0.1)
+current_label = vp.label(pos=vp.vec(0.85*x_min, 0.15*x_max, 0), color = vp.vec(1, 0.1, 0.1), text="I", border=0, box=False, 
+                         line=False)
 
 for x in vp.arange(x_min, x_max, dx):
     vp.rate(2)
