@@ -19,7 +19,7 @@ constant = mu_0*current/4/vp.pi   # This is from the eq B = mu*I/Area integral o
 
 # region B field arrow Creation
 
-B_tot = vp.vec(0,0,0)
+B_tot = vp.vec(0,0,0) # this will hold the 
 B_tot_arrow = vp.arrow(pos = POI, axis = B_tot*scale_factor, color = vp.vec(0.4, 0.4, 1)) # Arrow will be updated in loop
 
 B_label = vp.label(pos=POI, text="mT", color = B_tot_arrow.color, xoffset=20, yoffset=-20, border=0, box=False, line=False)
@@ -29,26 +29,25 @@ B_label = vp.label(pos=POI, text="mT", color = B_tot_arrow.color, xoffset=20, yo
 current_label = vp.label(pos=vp.vec(0.85*x_min, 0.15*x_max, 0), color = vp.vec(1, 0.1, 0.1), text="I", border=0, box=False, 
                          line=False)
 
-print("h")
-
-for x in vp.arange(x_min, x_max, dx):
+for x in vp.arange(x_min, x_max, dx): # Using for loop, where X is the position in the wire
     vp.rate(2)
     
     #for these particular cylinders, cylinder.pos is the LEFT end
-    segment = vp.cylinder( pos=vp.vec(x,0,0), axis=vp.vec(0.925*dx, 0,0), opacity=0.35) # Create a peice of the wire
+    segment = vp.cylinder(pos = vp.vec(x,0,0), axis=vp.vec(0.925*dx, 0,0), opacity = 0.35) # Create a peice of the wire
+                          # cylinder position is here, the axis is  
+                           
+                        
+    #to use the CENTER of the cylinder as the source add in dx/2 to the appropriate coordinate
+    #alternatively, you could increase N dramatically to make this error tiny but that dramatically slows computations later...
     
-    #to use the CENTER of the cylinder as the source
-    #add in dx/2 to the appropriate coordinate
-    #alternatively, you could increase N dramatically to make this error tiny
-    #but that dramatically slows computations later...
-    current_arrow = vp.arrow(pos = vp.vec(x+dx/2,0,0), # create a arrow for current
-                           axis = vp.vec(dx,0,0),
+    current_arrow = vp.arrow(pos = vp.vec(x+dx/2,0,0), # The position of the arrow tail
+                           axis = vp.vec(dx,0,0), # The direction the arrow head is pointed
                            color = vp.vec(1,0,0), opacity = 0.8,shaftwidth = 0.5, headwidth = 1, headlength = 0.5)    
     
     r = POI - current_arrow.pos # Vector from current to point of interest
-    ds = current_arrow.axis # 
+    ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
     
-    B_tot += constant*vp.cross(ds, r)/vp.mag(r)**3
+    B_tot += constant*vp.cross(ds, r)/vp.mag(r)**3 # db added to the total b field in POI
     B_tot_arrow.axis = B_tot*scale_factor
     B_label.text = f"<i>B<sub>tot</sub></i> =  {1e3*B_tot.mag:.2f} mT"
     
