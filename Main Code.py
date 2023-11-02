@@ -90,11 +90,11 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 
 # region Rings Creation
 # Constants for Rings
-R =  2
-N = 10 
+R =  2 # Radius of the Ring
+N = 10 # This tells us how many pieces will be in the Ring
 
-theta_min = radians(0)   # Our starting angle for the circle in Radians
-theta_max = radians(360) # Our ending angle for the circle in Radians
+theta_min = radians(0)   # Our starting angle for the Ring in Radians
+theta_max = radians(360) # Our ending angle for the Ring in Radians
 
 coil1 = [] # Made up of cylinders
 coil2 = [] # Made up of cylinders
@@ -102,19 +102,43 @@ coil2 = [] # Made up of cylinders
 Stage3_L = vp.label(pos = vec(-0, 5, 0), text = 'Stage 3')
 
 # Initial Calculations for Rings
-angle_tot = theta_max - theta_min # The total angle the circle will have
+angle_tot = theta_max - theta_min # The total angle the Ring will have
 dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
 
+positions_list = []
 # BUILDING RING 1
 for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
-    current_theta_hat = vec(sin(current_theta), cos(current_theta), 0) # Gives us a recangluar unit vector based on current angle
-    sphere(pos = vec(R*sin(current_theta), R*cos(current_theta), 0), radius = 0.05 * ds)
-    sphere.color = vec(1, 0, 0) # Color red
-    sphere.ds = R * current_theta_hat
     
-    # coil1.append(ring)
+    # Gives us a rectangluar unit vector based on current angle
+    current_position_hat = vec(cos(current_theta), sin(current_theta), 0)
+    
+    print(current_position_hat)
+    
+    # Create object in this location
+    sphere(pos = R * current_position_hat, radius = 0.05 * ds)
+    sphere.color = vec(1, 0, 0) # Color red
+    #sphere.ds = R * current_theta_hat
+    
+    current_position = R * current_position_hat
+    positions_list.append(current_position) # Add the positions to our list
+    
+cly = arrow(pos = positions_list[0], axis = positions_list[1]-positions_list[0])
+cly.radius = 0.05
+
+cly2 = arrow(pos = positions_list[3], axis = positions_list[4]-positions_list[3])
+cly2.radius = 0.05
+    
+# w = 0
+# for position in positions_list:
+    
+#     if w == len(positions_list):
+#         arrow(pos = position, axis = positions_list[0])
+#     else:
+#         arrow(pos = position, axis = positions_list[w + 1] - position)
         
+#     w =+ 1
+    
 # build ring 2
 # for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                              
 #     cylinder(pos = vec(R*sin(theta), R*cos(theta), -1), radius = 0.05 * ds, color = vec(1, 0, 0))
