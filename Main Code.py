@@ -27,6 +27,12 @@ def arange(min, max, change):
 def cylinder(**kid):
     return vp.cylinder(pos = kid["pos"], axis = kid["axis"], color = kid["color"])
 
+def pi():
+    return vp.pi
+
+def ring(**kid):
+    return vp.ring(pos = kid["pos"], axis = kid["axis"], radius = kid["radius"])
+
 # endregion
 
 # region Coordiante System 
@@ -97,31 +103,35 @@ electron.color = vec(0, 0, 1)
 
 # region Rings Creation
 # Constants for Rings
-R =  2 # Radius of the Ring
+R = 2 # Radius of the Ring
 N = 10 # This tells us how many pieces will be in the Ring
-
+POI = electron.pos  # Our point of interest, Specific place we care about
 theta_min = radians(0)   # Our starting angle for the Ring in Radians
 theta_max = radians(360) # Our ending angle for the Ring in Radians
-
-coil_2 = [] # Made up of cylinders
-
-Stage3_L = vp.label(pos = vec(-0, 5, 0), text = 'Stage 3')
+current = 1e4        # positive implies current CCW, negative CW
+mu_0 = 4*pi()*1e-7     # Constant in back of book of mu
+scale_factor = 1e4   # Widening, unknown ATM
 
 # Initial Calculations for Rings
 angle_tot = theta_max - theta_min # The total angle the Ring will have
 dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
+constant = mu_0 * current/4/pi()   # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
 
-# Make list of positions for each arrow
-positions_list = []
+# Loop to generate the position of all the arrows
+positions_list = [] # List to hold positions generated for each arrow
 for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     # Gives us a rectangluar unit vector based on current angle
-    current_position_hat = vec(cos(current_theta), sin(current_theta), 0)
-    current_position = R * current_position_hat 
+    current_position_hat = vec(cos(current_theta), sin(current_theta), 0) # Get current angle and breaks it, into x & y components
+    current_position = R * current_position_hat # Current position depending on the radius
     positions_list.append(current_position) # Add the positions to our list
     
 # BUILDING RING 1
 coil_1 = [] # Made up of cylinders
+Ring_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R)
+ring.thickness = 0.2
+ring.color = vec(1, 0, 0)
+
 for number_in_list  in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)
     if number_in_list == len(positions_list) - 1: 
         current_arrow = arrow(pos = positions_list[number_in_list], axis = positions_list[0] - positions_list[number_in_list])
@@ -130,6 +140,4 @@ for number_in_list  in arange(0, len(positions_list), 1): # Note: you never actu
         current_arrow = arrow(pos = positions_list[number_in_list], axis = positions_list[number_in_list + 1] - positions_list[number_in_list])
         coil_1.append(current_arrow)
         
-        
-     
 # endregion
