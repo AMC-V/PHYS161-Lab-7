@@ -67,7 +67,7 @@ neg_y_axis.shaftwidth = axis.s
 neg_y_axis.color = vec(0, 1, 0)
 neg_y_axis._round = True
 
-neg_y_axis_label = vp.label(pos = neg_y_axis.pos + neg_y_axis.axis + vp.vec(0, -axis.toffset, 0), 
+neg_y_axis_label = vp.label(pos = neg_y_axis.pos + neg_y_axis.axis + vec(0, -axis.toffset, 0), 
          text='-y', height = 16, border = 4,font = axis.f, line = False, opacity = 0, box = False)
 
 pos_z_axis = arrow(pos = origin, axis = vec(0,0,axis.l))
@@ -76,7 +76,7 @@ pos_z_axis.color = vec(0, 0, 1)
 pos_z_axis._round=True 
 
 
-pos_z_axis_label = vp.label(pos = pos_z_axis.pos + pos_z_axis.axis + vp.vec(0, axis.toffset, 0), 
+pos_z_axis_label = vp.label(pos = pos_z_axis.pos + pos_z_axis.axis + vec(0, axis.toffset, 0), 
          text='+z', height = 16, border = 4, font = axis.f, line = False, opacity = 0, box = False)
          
 neg_z_axis = arrow(pos = origin, axis = vec(0,0,-axis.l))
@@ -84,7 +84,7 @@ neg_z_axis.shaftwidth = axis.s
 neg_z_axis.color = vp.vec(0, 0, 1)
 neg_z_axis._round = True 
 
-neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vp.vec(0, -axis.toffset, 0), 
+neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axis.toffset, 0), 
          text='-z', height = 16, border = 4,font = axis.f, line = False, opacity = 0, box = False)
 # endregion
 
@@ -101,14 +101,14 @@ dtheta = angle_tot / (N-1)
 ds = R * dtheta
 
 #BUILD RING 1
-for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                          # for ring 1 
+for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                   # for ring 1 
     cylinder(pos = vec(R*sin(theta),R*cos(theta),0), radius = 0.05 * ds, color = vec(1, 0, 0))
     theta_hat = vec(sin(theta), cos(theta), 0)
     cylinder.ds = R*theta_hat
     coil1.append(ring)
         
 #build ring 2
-for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                          # for ring 2 
+for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                    # for ring 2 
     cylinder(pos = vec(R*sin(theta), R*cos(theta), -1), radius = 0.05 * ds, color = vec(1, 0, 0))
     theta_hat = vec(cos(theta), sin(theta), 0)
     cylinder.ds = R*theta_hat
