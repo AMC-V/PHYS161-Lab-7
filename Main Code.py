@@ -123,12 +123,17 @@ for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     current_position = R * current_position_hat
     positions_list.append(current_position) # Add the positions to our list
     
-cly = arrow(pos = positions_list[0], axis = positions_list[1]-positions_list[0])
-cly.radius = 0.05
+# cly = arrow(pos = positions_list[0], axis = positions_list[1]-positions_list[0])
+# cly.radius = 0.05
 
-cly2 = arrow(pos = positions_list[3], axis = positions_list[4]-positions_list[3])
-cly2.radius = 0.05
+# cly2 = arrow(pos = positions_list[3], axis = positions_list[4]-positions_list[3])
+# cly2.radius = 0.05
+
+for number_in_list  in arange(0, len(positions_list), 1):
+    arrow(pos = positions_list[number_in_list], axis = positions_list[number_in_list + 1] - positions_list[number_in_list])
     
+
+
 # w = 0
 # for position in positions_list:
     
