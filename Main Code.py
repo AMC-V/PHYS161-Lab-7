@@ -88,29 +88,38 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
          text='-z', height = 16, border = 4,font = axis.f, line = False, opacity = 0, box = False)
 # endregion
 
-coil1 = []
-coil2= []
-R=  2
-N =10
+# region Rings Creation
+coil1 = [] # Made up of cylinders
+coil2 = [] # Made up of cylinders
+
+R =  2
+N = 10 
 
 Stage3_L = vp.label(pos = vec(-0, 5, 0), text = 'Stage 3')
-theta_min = radians(0)
-theta_max = radians(360)
-angle_tot = theta_max-theta_min
-dtheta = angle_tot / (N-1)
-ds = R * dtheta
+
+theta_min = radians(0)   # Our starting point for the circle in Radians
+theta_max = radians(360) # Our ending point for the circle in Radians
+
+angle_tot = theta_max - theta_min
+
+dtheta = angle_tot / (N - 1)
+
+ds = R * dtheta # Small bit of arc lenght
 
 #BUILD RING 1
-for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                   # for ring 1 
-    cylinder(pos = vec(R*sin(theta),R*cos(theta),0), radius = 0.05 * ds, color = vec(1, 0, 0))
+for theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     theta_hat = vec(sin(theta), cos(theta), 0)
-    cylinder.ds = R*theta_hat
-    coil1.append(ring)
+    sphere(pos = vec(R*sin(theta), R*cos(theta), 0), radius = 0.05 * ds)
+    sphere.color = vec(1, 0, 0) # Color red
+    sphere.ds = R*theta_hat
+    
+    # coil1.append(ring)
         
-#build ring 2
-for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                    # for ring 2 
-    cylinder(pos = vec(R*sin(theta), R*cos(theta), -1), radius = 0.05 * ds, color = vec(1, 0, 0))
-    theta_hat = vec(cos(theta), sin(theta), 0)
-    cylinder.ds = R*theta_hat
-    coil2.append(ring)
+# build ring 2
+# for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                              
+#     cylinder(pos = vec(R*sin(theta), R*cos(theta), -1), radius = 0.05 * ds, color = vec(1, 0, 0))
+#     theta_hat = vec(cos(theta), sin(theta), 0)
+#     cylinder.ds = R*theta_hat
+    # coil2.append(ring)
      
+# endregion
