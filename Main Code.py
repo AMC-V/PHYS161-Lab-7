@@ -96,8 +96,8 @@ N = 10 # This tells us how many pieces will be in the Ring
 theta_min = radians(0)   # Our starting angle for the Ring in Radians
 theta_max = radians(360) # Our ending angle for the Ring in Radians
 
-coil1 = [] # Made up of cylinders
-coil2 = [] # Made up of cylinders
+coil_1 = [] # Made up of cylinders
+coil_2 = [] # Made up of cylinders
 
 Stage3_L = vp.label(pos = vec(-0, 5, 0), text = 'Stage 3')
 
@@ -107,42 +107,23 @@ dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
 
 positions_list = []
-# BUILDING RING 1
 for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
-    
     # Gives us a rectangluar unit vector based on current angle
     current_position_hat = vec(cos(current_theta), sin(current_theta), 0)
-    
-    print(current_position_hat)
-    
-    # Create object in this location
-    sphere(pos = R * current_position_hat, radius = 0.05 * ds)
-    sphere.color = vec(1, 0, 0) # Color red
-    #sphere.ds = R * current_theta_hat
-    
-    current_position = R * current_position_hat
+    current_position = R * current_position_hat 
     positions_list.append(current_position) # Add the positions to our list
     
-# cly = arrow(pos = positions_list[0], axis = positions_list[1]-positions_list[0])
-# cly.radius = 0.05
 
-# cly2 = arrow(pos = positions_list[3], axis = positions_list[4]-positions_list[3])
-# cly2.radius = 0.05
+# BUILDING RING 1
+for number_in_list  in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)
+    if number_in_list == len(positions_list) - 1: 
+        current_arrow = arrow(pos = positions_list[number_in_list], axis = positions_list[0] - positions_list[number_in_list])
+        coil_1.append(current_arrow)
+    else:
+        current_arrow = arrow(pos = positions_list[number_in_list], axis = positions_list[number_in_list + 1] - positions_list[number_in_list])
+        coil_1.append(current_arrow)
 
-for number_in_list  in arange(0, len(positions_list), 1):
-    arrow(pos = positions_list[number_in_list], axis = positions_list[number_in_list + 1] - positions_list[number_in_list])
-    
 
-
-# w = 0
-# for position in positions_list:
-    
-#     if w == len(positions_list):
-#         arrow(pos = position, axis = positions_list[0])
-#     else:
-#         arrow(pos = position, axis = positions_list[w + 1] - position)
-        
-#     w =+ 1
     
 # build ring 2
 # for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                              
