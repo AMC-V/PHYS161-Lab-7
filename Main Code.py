@@ -89,29 +89,29 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 # endregion
 
 # region Rings Creation
-coil1 = [] # Made up of cylinders
-coil2 = [] # Made up of cylinders
-
+# Constants for Rings
 R =  2
 N = 10 
 
+theta_min = radians(0)   # Our starting angle for the circle in Radians
+theta_max = radians(360) # Our ending angle for the circle in Radians
+
+coil1 = [] # Made up of cylinders
+coil2 = [] # Made up of cylinders
+
 Stage3_L = vp.label(pos = vec(-0, 5, 0), text = 'Stage 3')
 
-theta_min = radians(0)   # Our starting point for the circle in Radians
-theta_max = radians(360) # Our ending point for the circle in Radians
+# Initial Calculations for Rings
+angle_tot = theta_max - theta_min # The total angle the circle will have
+dtheta = angle_tot / (N - 1)      # A small bit of angle
+ds = R * dtheta                   # A small bit of arc lenght
 
-angle_tot = theta_max - theta_min
-
-dtheta = angle_tot / (N - 1)
-
-ds = R * dtheta # Small bit of arc lenght
-
-#BUILD RING 1
-for theta in arange (theta_min + dtheta/2, theta_max, dtheta):
-    theta_hat = vec(sin(theta), cos(theta), 0)
-    sphere(pos = vec(R*sin(theta), R*cos(theta), 0), radius = 0.05 * ds)
+# BUILDING RING 1
+for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
+    current_theta_hat = vec(sin(current_theta), cos(current_theta), 0) # Gives us a recangluar unit vector based on current angle
+    sphere(pos = vec(R*sin(current_theta), R*cos(current_theta), 0), radius = 0.05 * ds)
     sphere.color = vec(1, 0, 0) # Color red
-    sphere.ds = R*theta_hat
+    sphere.ds = R * current_theta_hat
     
     # coil1.append(ring)
         
