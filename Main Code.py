@@ -2,6 +2,7 @@ import vpython as vp
 
 # Notes remove vp. from all labels for code to work
 
+# region compatablaility methods from VCcode to Growscript, Don't add these to Glowscript
 def arrow(**kid):
     return vp.arrow(pos = kid["pos"], axis = kid["axis"])
 
@@ -13,6 +14,20 @@ def sphere(**kid):
 
 def radians(number):
     return vp.radians(number)
+
+def sin(number):
+    return vp.sin(number)
+
+def cos(number):
+    return vp.cos(number)
+
+def arange(min, max, change):
+    return vp.arange(min, max, change)
+
+def cylinder(**kid):
+    return vp.cylinder(pos = kid["pos"], axis = kid["axis"], color = kid["color"])
+
+# endregion
 
 # region Coordiante System 
 origin = vec(0, 0, 0)
@@ -87,14 +102,14 @@ ds = R * dtheta
 
 #BUILD RING 1
 for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                          # for ring 1 
-    cylinder(pos = vec(R*sin(theta),R*cos(theta),0), radius = 0.05 * ds, color = color.red)
+    cylinder(pos = vec(R*sin(theta),R*cos(theta),0), radius = 0.05 * ds, color = vec(1, 0, 0))
     theta_hat = vec(sin(theta), cos(theta), 0)
     cylinder.ds = R*theta_hat
     coil1.append(ring)
         
 #build ring 2
 for theta in arange (theta_min + dtheta/2, theta_max, dtheta):                                          # for ring 2 
-    cylinder(pos = vec(R*sin(theta), R*cos(theta), -1), radius = 0.05 * ds, color = color.red)
+    cylinder(pos = vec(R*sin(theta), R*cos(theta), -1), radius = 0.05 * ds, color = vec(1, 0, 0))
     theta_hat = vec(cos(theta), sin(theta), 0)
     cylinder.ds = R*theta_hat
     coil2.append(ring)
