@@ -3,6 +3,9 @@ import vpython as vp
 # Notes remove vp. from all labels for code to work
 
 # region compatablaility methods from VCcode to Growscript, Don't add these to Glowscript
+def arrow():
+    return vp.arrow()
+
 def arrow(**kid):
     return vp.arrow(pos = kid["pos"], axis = kid["axis"])
 
@@ -32,6 +35,15 @@ def pi():
 
 def ring(**kid):
     return vp.ring(pos = kid["pos"], axis = kid["axis"], radius = kid["radius"])
+
+def rate(number):
+    return vp.rate(number)
+
+def cross(number_1, number_2):
+    return vp.cross(number_1, number_2)
+
+def mag(number):
+    return vp.mag(number)
 
 # endregion
 
@@ -106,11 +118,17 @@ electron.color = vec(0, 0, 1)
 R = 2 # Radius of the Ring
 N = 10 # This tells us how many pieces will be in the Ring
 POI = electron.pos  # Our point of interest, Specific place we care about
+B_Total = vec(0, 0, 0)
 theta_min = radians(0)   # Our starting angle for the Ring in Radians
 theta_max = radians(360) # Our ending angle for the Ring in Radians
 current = 1e4        # positive implies current CCW, negative CW
 mu_0 = 4*pi()*1e-7     # Constant in back of book of mu
-scale_factor = 1e4   # Widening, unknown ATM
+scale_factor = 1e3   # Widening, unknown ATM
+
+# region Total Magnetic Field Arrow at one point
+B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
+B_Total_arrow.color = vec(0, 1, 0) # Green 
+# endregion
 
 # Initial Calculations for Rings
 angle_tot = theta_max - theta_min # The total angle the Ring will have
@@ -126,18 +144,31 @@ for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     current_position = R * current_position_hat # Current position depending on the radius
     positions_list.append(current_position) # Add the positions to our list
     
-# BUILDING RING 1
+# BUILDING RING 1 + current arrows
 coil_1 = [] # Made up of cylinders
-Ring_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R)
+Ring_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R*10)
 ring.thickness = 0.2
 ring.color = vec(1, 0, 0)
 
-for number_in_list  in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)
+for number_in_list in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)
+    rate(1)
+    
+    current_arrow = arrow()
+    current_arrow.color = vec(1, 0, 0)
+    
     if number_in_list == len(positions_list) - 1: 
-        current_arrow = arrow(pos = positions_list[number_in_list], axis = positions_list[0] - positions_list[number_in_list])
-        coil_1.append(current_arrow)
+        current_arrow.pos = positions_list[number_in_list]
+        current_arrow.axis = positions_list[0] - positions_list[number_in_list]
     else:
-        current_arrow = arrow(pos = positions_list[number_in_list], axis = positions_list[number_in_list + 1] - positions_list[number_in_list])
-        coil_1.append(current_arrow)
+        current_arrow.pos = positions_list[number_in_list]
+        current_arrow.axis = positions_list[number_in_list + 1] - positions_list[number_in_list]
+       
+    r = POI - current_arrow.pos # Vector from current to point of interest
+    ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
+    
+    B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
+    B_Total_arrow.axis = B_Total * scale_factor
+    
+    coil_1.append(current_arrow)
         
 # endregion
