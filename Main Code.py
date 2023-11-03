@@ -43,7 +43,6 @@ def cross(number_1, number_2):
 
 def mag(number):
     return vp.mag(number)
-
 # endregion
 
 # region Coordiante System 
@@ -107,28 +106,29 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 # endregion
 
 # region Election Creation
-
-electron = sphere(pos = origin + vec(0, .2, 0), radius = 0.1)
+electron = sphere(pos = origin + vec(0, .2, 1), radius = 0.1)
 electron.color = vec(0, 0.5, 1)
 electron.q = 1.602e-19 # C
 electron.m = 9.11e-31 # Kg
 electron.a = vec(0, 0, 0)
-electron.v = vec(1, 0, 0.1)
-
+electron.v = vec(0, 5, 10)
 # endregion
 
 # region Coil Creation
 
 # region Constants for Coil
-R = 2 # Radius of the Coil
+R = 1  # Radius of the Coil
 N = 10 # This tells us how many pieces will be in the Coil
-POI = electron.pos  # Our point of interest, Specific place we care about
-B_Total = vec(0, 0, 0)
+POI = electron.pos       # Our point of interest, Specific place we care about
+B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
+F_Total = vec(0, 0, 0)   # WIll hold the current force 
 theta_min = radians(0)   # Our starting angle for the Coil in Radians
 theta_max = radians(360) # Our ending angle for the Coil in Radians
 current = 1e4            # positive implies current CCW, negative CW
 mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
-scale_factor = 1e3       # Widening, unknown ATM
+scale_factor = 10**(2.5) # Widening, unknown ATM
+scale_factor2 = 0.1
+stauration_factor = 1.5
 # endregion
 
 # region Initial Calculations for Coil
@@ -138,10 +138,14 @@ ds = R * dtheta                   # A small bit of arc lenght
 constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
 # endregion
 
-# region Total Magnetic Field Arrow at one point
+# region Total Magnetic Field Arrow at one point and Force Arrow
+Force_arrow = arrow(pos = electron.pos, axis = vec(10, 10, 0))
+Force_arrow.color = vec(0, 0, 1)
+Force_arrow.opacity = 1
+
 B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
 B_Total_arrow.color = vec(0, 1, 0) # Green 
-B_Total_arrow.opacity = .5
+B_Total_arrow.opacity = 0.5
 # endregion
 
 # region Loop to generate the position of all the arrows
@@ -152,27 +156,6 @@ for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     current_position = R * current_position_hat # Current position depending on the radius
     positions_list.append(current_position) # Add the positions to our list
 # endregion 
-
-# region BUILDING Coil 1 + current arrows
-current_in_coil_1 = [] # Made up from the currents in Coil
-Coil_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R)
-Coil_visual.thickness = 0.2
-Coil_visual.color = vec(1, 0, 0)
-
-# This loop creates current arrows
-for number_in_list in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)  
-    current_arrow = vp.arrow()         # Creates standard arrow
-    current_arrow.color = vec(1, 0, 0) # Color arrow red to represent current
-    
-    if number_in_list == len(positions_list) - 1: 
-        current_arrow.pos = positions_list[number_in_list]
-        current_arrow.axis = positions_list[0] - positions_list[number_in_list]
-    else:
-        current_arrow.pos = positions_list[number_in_list]
-        current_arrow.axis = positions_list[number_in_list + 1] - positions_list[number_in_list]
-        
-    current_in_coil_1.append(current_arrow)
-# endregion
 
 # region Methods
 
@@ -189,6 +172,38 @@ def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
         
     return B_Total_Temp
         
+# Method to create a Coil, it can be moved in z direction 
+def create_coil(position_list):
+    current_in_coil = [] # Made up from the currents in Coil
+    Coil_visual = ring(pos = vec(0, 0, position_list[0].z), axis = vec(0, 0, 1), radius = R * 0.95)
+    Coil_visual.thickness = 0.2
+    Coil_visual.opacity = 0.4
+    Coil_visual.texture = vp.textures.metal
+    
+    # This loop creates current arrows
+    for number_in_list in arange(0, len(position_list), 1): # Note: you never actually reach the value = len(positions_list)  
+        current_arrow = vp.arrow()         # Creates standard arrow
+        current_arrow.color = vec(1, 0, 0) # Color arrow red to represent current
+        
+        if number_in_list == len(position_list) - 1: 
+            current_arrow.pos = position_list[number_in_list]
+            current_arrow.axis = position_list[0] - position_list[number_in_list]
+        else:
+            current_arrow.pos = position_list[number_in_list]
+            current_arrow.axis = position_list[number_in_list + 1] - position_list[number_in_list]
+            
+        current_in_coil.append(current_arrow)
+    
+    return current_in_coil
+# endregion
+
+# region BUILDING Coils + current arrows
+currents_in_Coil_List_1 = create_coil(positions_list)
+
+for index in arange(0, len(positions_list), 1):
+    positions_list[index] = positions_list[index] + vec(0, 0, 7)
+    
+currents_in_Coil_List_2 = create_coil(positions_list)
 # endregion
 
 # endregion
@@ -201,15 +216,23 @@ sim_speed = 0.000000005
 while t < 10000 * dt:
     rate(sim_speed/dt)
     
-    current_B_field = current_magnetic_field_from_coil(current_in_coil_1, electron.pos)
+    current_B_field_1 = current_magnetic_field_from_coil(currents_in_Coil_List_1, electron.pos) # First time, the electrons pos is 0
+    current_B_field_2 = current_magnetic_field_from_coil(currents_in_Coil_List_2, electron.pos) # First time, the electrons pos is 0    
+    current_B_field_Total = current_B_field_1 + current_B_field_2
     
-    current_force = electron.q * cross(electron.v,current_B_field)
+    current_force = electron.q * cross(electron.v, current_B_field_Total)
     
-    electron.a = current_force/ electron.m
+    electron.a = current_force / electron.m
     electron.v += electron.a * dt
     electron.pos += electron.v * dt
     
-    B_Total_arrow.pos += electron.v * dt
+    if mag(electron.pos - current_force) > stauration_factor:
+        Force_arrow.axis = stauration_factor * vp.hat(electron.pos - current_force)  
+    else:
+        Force_arrow.axis = electron.pos - current_force # Head dir of arrow should be towards center
+    
+    B_Total_arrow.axis = current_B_field_Total * scale_factor
+    B_Total_arrow.pos = Force_arrow.pos = electron.pos
     
     t += dt
 
