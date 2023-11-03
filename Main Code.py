@@ -146,12 +146,12 @@ for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
 # endregion 
 
 # region BUILDING Coil 1 + current arrows
-current_in_coil_1 = [] # Made up of cylinders
-Coil_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R*10)
+current_in_coil_1 = [] # Made up from the currents in Coil
+Coil_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R)
 Coil_visual.thickness = 0.2
 Coil_visual.color = vec(1, 0, 0)
 
-# This loop creates current arrows and calculates initial magentic field for ball
+# This loop creates current arrows
 for number_in_list in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)  
     current_arrow = vp.arrow()         # Creates standard arrow
     current_arrow.color = vec(1, 0, 0) # Color arrow red to represent current
@@ -165,13 +165,22 @@ for number_in_list in arange(0, len(positions_list), 1): # Note: you never actua
         
     current_in_coil_1.append(current_arrow)
 # endregion
-    
-# This loop calculates the magnetic field total at a specific point
-def current_magnetic_field_for_one_coil():
-    for current_arrow in current_in_coil_1:
+
+# region Animation of Electron
+
+# yo
+
+# endregion
+
+# region Method to calculate the magnetic field total from a Coil at a specific point
+def current_magnetic_field_form_coil(current_in_coil_list):
+    for current_arrow in current_in_coil_list:
         r = POI - current_arrow.pos # Vector from current to point of interest
         ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
         
         B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
         B_Total_arrow.axis = B_Total * scale_factor
 # endregion
+
+# endregion
+
