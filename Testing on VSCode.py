@@ -38,10 +38,6 @@ for x in vp.arange(x_min, x_max, dx): # Using for loop, where X is the position 
     #to use the CENTER of the cylinder as the source add in dx/2 to the appropriate coordinate
     #alternatively, you could increase N dramatically to make this error tiny but that dramatically slows computations later...
     
-    
-    
-    
-    
     current_arrow = vp.arrow(pos = vp.vec(x+dx/2,0,0), # The position of the arrow tail
                            axis = vp.vec(dx,0,0), # The direction the arrow head is pointed
                            color = vp.vec(1,0,0), opacity = 0.8,shaftwidth = 0.5, headwidth = 1, headlength = 0.5)    

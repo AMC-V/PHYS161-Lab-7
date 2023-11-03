@@ -1,4 +1,6 @@
+# region Imports
 import vpython as vp
+# endregion
 
 # Notes remove vp. from all labels for coord. sys AND the parathesis on the pi() AND vp. from arrow 
 
@@ -166,13 +168,9 @@ for number_in_list in arange(0, len(positions_list), 1): # Note: you never actua
     current_in_coil_1.append(current_arrow)
 # endregion
 
-# region Animation of Electron
+# region Methods
 
-# yo
-
-# endregion
-
-# region Method to calculate the magnetic field total from a Coil at a specific point
+# Method to calculate the magnetic field total from a Coil at a specific point
 def current_magnetic_field_form_coil(current_in_coil_list):
     for current_arrow in current_in_coil_list:
         r = POI - current_arrow.pos # Vector from current to point of interest
@@ -184,3 +182,8 @@ def current_magnetic_field_form_coil(current_in_coil_list):
 
 # endregion
 
+# region Animation of Electron
+
+# yo
+
+# endregion
