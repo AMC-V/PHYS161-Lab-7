@@ -1,11 +1,8 @@
 import vpython as vp
 
-# Notes remove vp. from all labels for code to work
+# Notes remove vp. from all labels for coord. AND the parapthies on the pi() and one from 
 
 # region compatablaility methods from VCcode to Growscript, Don't add these to Glowscript
-def arrow():
-    return vp.arrow()
-
 def arrow(**kid):
     return vp.arrow(pos = kid["pos"], axis = kid["axis"])
 
@@ -114,7 +111,8 @@ electron.color = vec(0, 0, 1)
 # endregion
 
 # region Rings Creation
-# Constants for Rings
+
+# region Constants for Rings
 R = 2 # Radius of the Ring
 N = 10 # This tells us how many pieces will be in the Ring
 POI = electron.pos  # Our point of interest, Specific place we care about
@@ -124,37 +122,39 @@ theta_max = radians(360) # Our ending angle for the Ring in Radians
 current = 1e4        # positive implies current CCW, negative CW
 mu_0 = 4*pi()*1e-7     # Constant in back of book of mu
 scale_factor = 1e3   # Widening, unknown ATM
+# endregion
 
 # region Total Magnetic Field Arrow at one point
 B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
 B_Total_arrow.color = vec(0, 1, 0) # Green 
 # endregion
 
-# Initial Calculations for Rings
+# region Initial Calculations for Rings
 angle_tot = theta_max - theta_min # The total angle the Ring will have
 dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
-constant = mu_0 * current/4/pi()   # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
+constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
+# endregion
 
-# Loop to generate the position of all the arrows
+# region Loop to generate the position of all the arrows
 positions_list = [] # List to hold positions generated for each arrow
 for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     # Gives us a rectangluar unit vector based on current angle
     current_position_hat = vec(cos(current_theta), sin(current_theta), 0) # Get current angle and breaks it, into x & y components
     current_position = R * current_position_hat # Current position depending on the radius
     positions_list.append(current_position) # Add the positions to our list
-    
-# BUILDING RING 1 + current arrows
-coil_1 = [] # Made up of cylinders
+# endregion 
+
+# region BUILDING RING 1 + current arrows
+current_in_coil_1 = [] # Made up of cylinders
 Ring_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R*10)
 ring.thickness = 0.2
 ring.color = vec(1, 0, 0)
 
-for number_in_list in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)
-    rate(1)
-    
-    current_arrow = arrow()
-    current_arrow.color = vec(1, 0, 0)
+# This loop creates current arrows and calculates initial magentic field for ball
+for number_in_list in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)  
+    current_arrow = vp.arrow()         # Creates standard arrow
+    current_arrow.color = vec(1, 0, 0) # Color arrow red to represent current
     
     if number_in_list == len(positions_list) - 1: 
         current_arrow.pos = positions_list[number_in_list]
@@ -162,13 +162,16 @@ for number_in_list in arange(0, len(positions_list), 1): # Note: you never actua
     else:
         current_arrow.pos = positions_list[number_in_list]
         current_arrow.axis = positions_list[number_in_list + 1] - positions_list[number_in_list]
-       
+        
+    current_in_coil_1.append(current_arrow)
+# endregion
+    
+# This loop calculates the magnetic field total at a specific point
+for current_arrow in current_in_coil_1:
     r = POI - current_arrow.pos # Vector from current to point of interest
     ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
     
     B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
     B_Total_arrow.axis = B_Total * scale_factor
-    
-    coil_1.append(current_arrow)
         
 # endregion
