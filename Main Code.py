@@ -1,8 +1,8 @@
+# Notes remove vp. from all labels for coord. sys AND the parathesis on the pi() AND vp. from arrow 
+
 # region Imports
 import vpython as vp
 # endregion
-
-# Notes remove vp. from all labels for coord. sys AND the parathesis on the pi() AND vp. from arrow 
 
 # region compatablaility methods from VCcode to Growscript, Don't add these to Glowscript
 def arrow(**kid):
@@ -141,7 +141,7 @@ constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral o
 # region Total Magnetic Field Arrow at one point
 B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
 B_Total_arrow.color = vec(0, 1, 0) # Green 
-B_Total_arrow.opacity = 0
+B_Total_arrow.opacity = .5
 # endregion
 
 # region Loop to generate the position of all the arrows
@@ -178,17 +178,16 @@ for number_in_list in arange(0, len(positions_list), 1): # Note: you never actua
 
 # Method to calculate the magnetic field total from a Coil at a specific point
 def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
-    B_Total = vec(0, 0, 0)
+    B_Total_Temp = vec(0, 0, 0)
     
     for current_arrow in current_in_coil_list:
         r = my_POI - current_arrow.pos # Vector from current to point of interest
         ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
         
-        B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
-        B_Total_arrow.axis = B_Total * scale_factor
+        B_Total_Temp += constant * cross(ds,r) / mag(r)**3 # db added to the total b field in POI
+        B_Total_arrow.axis = B_Total_Temp * scale_factor
         
-    return B_Total
-        
+    return B_Total_Temp
         
 # endregion
 
@@ -199,16 +198,18 @@ t = 0
 dt = 1e-9
 sim_speed = 0.000000005
 
-while t < 10000*dt:
+while t < 10000 * dt:
     rate(sim_speed/dt)
     
     current_B_field = current_magnetic_field_from_coil(current_in_coil_1, electron.pos)
     
-    current_force = electron.q * cross(electron.v, current_B_field)
+    current_force = electron.q * cross(electron.v,current_B_field)
     
     electron.a = current_force/ electron.m
     electron.v += electron.a * dt
     electron.pos += electron.v * dt
+    
+    B_Total_arrow.pos += electron.v * dt
     
     t += dt
 
