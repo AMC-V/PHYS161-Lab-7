@@ -1,6 +1,6 @@
 import vpython as vp
 
-# Notes remove vp. from all labels for coord. AND the parapthies on the pi() and one from 
+# Notes remove vp. from all labels for coord. sys AND the parathesis on the pi() AND vp. from arrow 
 
 # region compatablaility methods from VCcode to Growscript, Don't add these to Glowscript
 def arrow(**kid):
@@ -110,18 +110,18 @@ electron.color = vec(0, 0, 1)
 
 # endregion
 
-# region Rings Creation
+# region Coil Creation
 
-# region Constants for Rings
-R = 2 # Radius of the Ring
-N = 10 # This tells us how many pieces will be in the Ring
+# region Constants for Coil
+R = 2 # Radius of the Coil
+N = 10 # This tells us how many pieces will be in the Coil
 POI = electron.pos  # Our point of interest, Specific place we care about
 B_Total = vec(0, 0, 0)
-theta_min = radians(0)   # Our starting angle for the Ring in Radians
-theta_max = radians(360) # Our ending angle for the Ring in Radians
-current = 1e4        # positive implies current CCW, negative CW
-mu_0 = 4*pi()*1e-7     # Constant in back of book of mu
-scale_factor = 1e3   # Widening, unknown ATM
+theta_min = radians(0)   # Our starting angle for the Coil in Radians
+theta_max = radians(360) # Our ending angle for the Coil in Radians
+current = 1e4            # positive implies current CCW, negative CW
+mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
+scale_factor = 1e3       # Widening, unknown ATM
 # endregion
 
 # region Total Magnetic Field Arrow at one point
@@ -129,8 +129,8 @@ B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
 B_Total_arrow.color = vec(0, 1, 0) # Green 
 # endregion
 
-# region Initial Calculations for Rings
-angle_tot = theta_max - theta_min # The total angle the Ring will have
+# region Initial Calculations for Coil
+angle_tot = theta_max - theta_min # The total angle the Coil will have
 dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
 constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
@@ -145,11 +145,11 @@ for current_theta in arange (theta_min + dtheta/2, theta_max, dtheta):
     positions_list.append(current_position) # Add the positions to our list
 # endregion 
 
-# region BUILDING RING 1 + current arrows
+# region BUILDING Coil 1 + current arrows
 current_in_coil_1 = [] # Made up of cylinders
-Ring_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R*10)
-ring.thickness = 0.2
-ring.color = vec(1, 0, 0)
+Coil_visual = ring(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = R*10)
+Coil_visual.thickness = 0.2
+Coil_visual.color = vec(1, 0, 0)
 
 # This loop creates current arrows and calculates initial magentic field for ball
 for number_in_list in arange(0, len(positions_list), 1): # Note: you never actually reach the value = len(positions_list)  
@@ -167,11 +167,11 @@ for number_in_list in arange(0, len(positions_list), 1): # Note: you never actua
 # endregion
     
 # This loop calculates the magnetic field total at a specific point
-for current_arrow in current_in_coil_1:
-    r = POI - current_arrow.pos # Vector from current to point of interest
-    ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
-    
-    B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
-    B_Total_arrow.axis = B_Total * scale_factor
+def current_magnetic_field_for_one_coil():
+    for current_arrow in current_in_coil_1:
+        r = POI - current_arrow.pos # Vector from current to point of interest
+        ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
         
+        B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
+        B_Total_arrow.axis = B_Total * scale_factor
 # endregion
