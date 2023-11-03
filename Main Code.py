@@ -91,10 +91,11 @@ pos_z_axis = arrow(pos = origin, axis = vec(0,0,axis.l))
 pos_z_axis.shaftwidth = axis.s
 pos_z_axis.color = vec(0, 0, 1)
 pos_z_axis._round=True 
+pos_z_axis.opacity = 0
 
 
-pos_z_axis_label = vp.label(pos = pos_z_axis.pos + pos_z_axis.axis + vec(0, axis.toffset, 0), 
-         text='+z', height = 16, border = 4, font = axis.f, line = False, opacity = 0, box = False)
+# pos_z_axis_label = vp.label(pos = pos_z_axis.pos + pos_z_axis.axis + vec(0, axis.toffset, 0), 
+#          text='+z', height = 16, border = 4, font = axis.f, line = False, opacity = 0, box = False)
          
 neg_z_axis = arrow(pos = origin, axis = vec(0,0,-axis.l))
 neg_z_axis.shaftwidth = axis.s
@@ -107,8 +108,12 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 
 # region Election Creation
 
-electron = sphere(pos = origin, radius = 0.1)
-electron.color = vec(0, 0, 1)
+electron = sphere(pos = origin + vec(0, .2, 0), radius = 0.1)
+electron.color = vec(0, 0.5, 1)
+electron.q = 1.602e-19 # C
+electron.m = 9.11e-31 # Kg
+electron.a = vec(0, 0, 0)
+electron.v = vec(1, 0, 0.1)
 
 # endregion
 
@@ -126,16 +131,17 @@ mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
 scale_factor = 1e3       # Widening, unknown ATM
 # endregion
 
-# region Total Magnetic Field Arrow at one point
-B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
-B_Total_arrow.color = vec(0, 1, 0) # Green 
-# endregion
-
 # region Initial Calculations for Coil
 angle_tot = theta_max - theta_min # The total angle the Coil will have
 dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
 constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
+# endregion
+
+# region Total Magnetic Field Arrow at one point
+B_Total_arrow = arrow(pos = electron.pos, axis = B_Total * scale_factor)
+B_Total_arrow.color = vec(0, 1, 0) # Green 
+B_Total_arrow.opacity = 0
 # endregion
 
 # region Loop to generate the position of all the arrows
@@ -171,19 +177,39 @@ for number_in_list in arange(0, len(positions_list), 1): # Note: you never actua
 # region Methods
 
 # Method to calculate the magnetic field total from a Coil at a specific point
-def current_magnetic_field_form_coil(current_in_coil_list):
+def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
+    B_Total = vec(0, 0, 0)
+    
     for current_arrow in current_in_coil_list:
-        r = POI - current_arrow.pos # Vector from current to point of interest
+        r = my_POI - current_arrow.pos # Vector from current to point of interest
         ds = current_arrow.axis # vector a small amount of distance pointed in dir of current
         
         B_Total += constant*cross(ds, r)/mag(r)**3 # db added to the total b field in POI
         B_Total_arrow.axis = B_Total * scale_factor
+        
+    return B_Total
+        
+        
 # endregion
 
 # endregion
 
 # region Animation of Electron
+t = 0
+dt = 1e-9
+sim_speed = 0.000000005
 
-# yo
+while t < 10000*dt:
+    rate(sim_speed/dt)
+    
+    current_B_field = current_magnetic_field_from_coil(current_in_coil_1, electron.pos)
+    
+    current_force = electron.q * cross(electron.v, current_B_field)
+    
+    electron.a = current_force/ electron.m
+    electron.v += electron.a * dt
+    electron.pos += electron.v * dt
+    
+    t += dt
 
 # endregion
