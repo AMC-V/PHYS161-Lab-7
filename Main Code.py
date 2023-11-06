@@ -12,7 +12,7 @@ def vec(x,y,z):
     return vp.vec(x,y,z)
 
 def sphere(**kid):
-    return vp.sphere(pos = kid["pos"], radius = kid["radius"])
+    return vp.sphere(pos = kid["pos"], radius = kid["radius"], make_trail = True)
 
 def radians(number):
     return vp.radians(number)
@@ -101,19 +101,20 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 # endregion
 
 # region Particle Creation
-Particle = sphere(pos = origin + vec(-0.2, 0.2, 5), radius = 0.1)
+Particle = sphere(pos = origin + vec(0.1, 0.2, 1), radius = 0.1)
+Particle.trail_radius = 0.01
 Particle.color = vec(0, 0.5, 1)
 Particle.q = 1.602e-19 # C, charge of a proton
 Particle.m = 9.11e-31 # Kg, mass of a proton
 Particle.a = vec(0, 0, 0)
-Particle.v = vec(1, -1, 5)
+Particle.v = vec(-2, 1, 10)
 # endregion
 
 # region Coil Creation
 
 # region Constants for Coil
 R = 0.5  # Radius of the Coil
-N = 20 # This tells us how many pieces will be in the Coil
+N = 10 # This tells us how many pieces will be in the Coil
 POI = Particle.pos       # Our point of interest, Specific place we care about
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
 F_Total = vec(0, 0, 0)   # WIll hold the current force 
@@ -223,11 +224,11 @@ def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
 
 # region BUILDING Position list + Coils + current arrows
 # List to hold positions generated for each arrow
-positions_list_1 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, 0, R) 
+positions_list_1 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, -3, R) 
 # Making Coil with its currents
 currents_in_Coil_List_1 = create_coil(positions_list_1, R, 'Coil_1')
 
-positions_list_2 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, 10, R)
+positions_list_2 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, 3, R)
 currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # endregion
 
