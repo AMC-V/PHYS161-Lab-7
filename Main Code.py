@@ -101,28 +101,28 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 # endregion
 
 # region Particle Creation
-Particle = sphere(pos = origin + vec(0.1, 0.2, 1), radius = 0.1)
+Particle = sphere(pos = origin + vec(0, 0, 2), radius = 0.1) # 0,.1,-7.5
 Particle.trail_radius = 0.01
 Particle.color = vec(0, 0.5, 1)
 Particle.q = 1.602e-19 # C, charge of a proton
-Particle.m = 9.11e-31 # Kg, mass of a proton
+Particle.m = 1.673e-27 # Kg, mass of a proton
 Particle.a = vec(0, 0, 0)
-Particle.v = vec(-2, 1, 10)
+Particle.v = vec(0, 0, 0) # -, 5010
 # endregion
 
 # region Coil Creation
 
 # region Constants for Coil
-R = 0.5  # Radius of the Coil
-N = 10 # This tells us how many pieces will be in the Coil
+R = 5  # Radius of the Coil
+N = 100 # This tells us how many pieces will be in the Coil
 POI = Particle.pos       # Our point of interest, Specific place we care about
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
 F_Total = vec(0, 0, 0)   # WIll hold the current force 
 theta_min = radians(0)   # Our starting angle for the Coil in Radians
 theta_max = radians(360) # Our ending angle for the Coil in Radians
-current = 1e5            # positive implies current CCW, negative CW og 1e4
+current = 10             # positive implies current CCW, negative CW og 1e4
 mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
-scale_factor = 10**(2.5) # Widening, unknown ATM
+scale_factor = 5e5 # Widening, unknown ATM
 scale_factor2 = 0.1
 stauration_factor = 1.5
 # endregion
@@ -212,23 +212,22 @@ def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
     B_Total_Temp = vec(0, 0, 0) # Will hold the magnetic field contribution from all the currents in Coil
     
     # Loop will go through all the positions (representing current) in the coil    
-    for current_arrow in current_in_coil_list:
-        r = my_POI - current_arrow.pos # Get vector from a current in the Coil to point of interest
-        ds = current_arrow.axis - current_arrow.pos # vector a small amount of distance pointed in dir of current
+    for my_current_arrow in current_in_coil_list:
+        r = my_POI - my_current_arrow.pos # Get vector from a current in the Coil to point of interest
+        ds = my_current_arrow.axis - my_current_arrow.pos # vector a small amount of distance pointed in dir of current
         
         B_Total_Temp += constant * cross(ds,r) / mag(r)**3 # db added to the total b field in POI
-        B_Total_arrow.axis = B_Total_Temp * scale_factor
         
     return B_Total_Temp
 # endregion
 
 # region BUILDING Position list + Coils + current arrows
 # List to hold positions generated for each arrow
-positions_list_1 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, -3, R) 
+positions_list_1 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, -10, R) 
 # Making Coil with its currents
 currents_in_Coil_List_1 = create_coil(positions_list_1, R, 'Coil_1')
 
-positions_list_2 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, 3, R)
+positions_list_2 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, 10, R)
 currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # endregion
 
@@ -236,10 +235,11 @@ currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 
 # region Animation of Particle
 t = 0
-dt = 1e-9
-sim_speed = 0.000000005
+dt = 1e-4 # -9
+sim_speed = 1e4
 
-while t < 10000 * dt:
+
+while True:
     rate(sim_speed/dt)
     
     # First time the particle's position will be vec(0, 0, 0)
@@ -248,6 +248,12 @@ while t < 10000 * dt:
     
     # Adding both fields
     current_B_field_Total = current_B_field_1 + current_B_field_2
+    
+    b = 
+    
+    print(f'B experimetal is ({(current_B_field_Total)}) and B theortical is ({}) at {t}')
+    
+    # break
     
     current_force = Particle.q * cross(Particle.v, current_B_field_Total)
 
