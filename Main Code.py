@@ -101,20 +101,20 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 # endregion
 
 # region Particle Creation
-Particle = sphere(pos = origin + vec(0, 0, 2), radius = 0.1) # 0,.1,-7.5
+Particle = sphere(pos = origin + vec(0, 0.11, 7.1), radius = 0.1) # 0,.11,-6.1
 Particle.trail_radius = 0.01
 Particle.color = vec(0, 0.5, 1)
 Particle.q = 1.602e-19 # C, charge of a proton
 Particle.m = 1.673e-27 # Kg, mass of a proton
 Particle.a = vec(0, 0, 0)
-Particle.v = vec(0, 0, 0) # -, 5010
+Particle.v = vec(0, -10.5, 14) # 0, -10.5, 10.3
 # endregion
 
 # region Coil Creation
 
 # region Constants for Coil
 R = 5  # Radius of the Coil
-N = 100 # This tells us how many pieces will be in the Coil
+N = 200 # This tells us how many pieces will be in the Coil
 POI = Particle.pos       # Our point of interest, Specific place we care about
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
 F_Total = vec(0, 0, 0)   # WIll hold the current force 
@@ -214,7 +214,7 @@ def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
     # Loop will go through all the positions (representing current) in the coil    
     for my_current_arrow in current_in_coil_list:
         r = my_POI - my_current_arrow.pos # Get vector from a current in the Coil to point of interest
-        ds = my_current_arrow.axis - my_current_arrow.pos # vector a small amount of distance pointed in dir of current
+        ds = my_current_arrow.axis  - my_current_arrow.pos # vector a small amount of distance pointed in dir of current
         
         B_Total_Temp += constant * cross(ds,r) / mag(r)**3 # db added to the total b field in POI
         
@@ -249,11 +249,9 @@ while True:
     # Adding both fields
     current_B_field_Total = current_B_field_1 + current_B_field_2
     
-    b = 
+    print(f'B experimetal is ({(current_B_field_Total)})')
     
-    print(f'B experimetal is ({(current_B_field_Total)}) and B theortical is ({}) at {t}')
-    
-    # break
+    #break
     
     current_force = Particle.q * cross(Particle.v, current_B_field_Total)
 
@@ -266,7 +264,7 @@ while True:
 
     B_Total_arrow.pos = Force_Coils_on_Particle_arrow.pos = velocity_arrow.pos = Particle.pos
 
-    B_Total_arrow.axis =  current_B_field_Total * scale_factor
+    B_Total_arrow.axis =  current_B_field_Total * scale_factor * 8
     B_Total_arrow_label.pos = B_Total_arrow.axis + B_Total_arrow.pos
    
     velocity_arrow.axis = stauration_factor * 1 * hat(Particle.v)
