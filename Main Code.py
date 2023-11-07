@@ -101,20 +101,20 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
 # endregion
 
 # region Particle Creation
-Particle = sphere(pos = origin + vec(0, 0.11, 7.1), radius = 0.1) # 0,.11,-6.1
+Particle = sphere(pos = origin + vec(0, 0.57, 0), radius = 0.1) # 0,.11,7.1
 Particle.trail_radius = 0.01
 Particle.color = vec(0, 0.5, 1)
 Particle.q = 1.602e-19 # C, charge of a proton
 Particle.m = 1.673e-27 # Kg, mass of a proton
 Particle.a = vec(0, 0, 0)
-Particle.v = vec(0, -10.5, 14) # 0, -10.5, 10.3
+Particle.v = vec(12.3, 0, 25) # 0, -10.5, 14
 # endregion
 
 # region Coil Creation
 
 # region Constants for Coil
 R = 5  # Radius of the Coil
-N = 200 # This tells us how many pieces will be in the Coil
+N = 12 # This tells us how many pieces will be in the Coil
 POI = Particle.pos       # Our point of interest, Specific place we care about
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
 F_Total = vec(0, 0, 0)   # WIll hold the current force 
@@ -236,7 +236,7 @@ currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # region Animation of Particle
 t = 0
 dt = 1e-4 # -9
-sim_speed = 1e4
+sim_speed = 1e5
 
 
 while True:
@@ -264,7 +264,7 @@ while True:
 
     B_Total_arrow.pos = Force_Coils_on_Particle_arrow.pos = velocity_arrow.pos = Particle.pos
 
-    B_Total_arrow.axis =  current_B_field_Total * scale_factor * 8
+    B_Total_arrow.axis =  current_B_field_Total * scale_factor * 5
     B_Total_arrow_label.pos = B_Total_arrow.axis + B_Total_arrow.pos
    
     velocity_arrow.axis = stauration_factor * 1 * hat(Particle.v)
