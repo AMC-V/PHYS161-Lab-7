@@ -116,15 +116,14 @@ Particle.v = vec(12.3, 0, 25) # 0, -10.5, 14
 R = 5  # Radius of the Coil
 N = 50 # This tells us how many pieces will be in the Coil, 12
 POI = Particle.pos       # Our point of interest, Specific place we care about
+mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
+current = 10             # positive implies current CCW, negative CW
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
 F_Total = vec(0, 0, 0)   # WIll hold the current force 
 theta_min = radians(0)   # Our starting angle for the Coil in Radians
 theta_max = radians(360) # Our ending angle for the Coil in Radians
-current = 10             # positive implies current CCW, negative CW og 1e4
-mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
-scale_factor = 5e5 # Widening, unknown ATM
-scale_factor2 = 0.1
-stauration_factor = 1.5
+scale_factor = 5e5       # To scale B field arrow
+scale_factor2 = 1.5      # To scale Force and velocity arrows
 # endregion
 
 # region Initial Calculations for Coil
@@ -267,10 +266,10 @@ while True:
     B_Total_arrow.axis =  current_B_field_Total * scale_factor * 5
     B_Total_arrow_label.pos = B_Total_arrow.axis + B_Total_arrow.pos
    
-    velocity_arrow.axis = stauration_factor * 1 * hat(Particle.v)
+    velocity_arrow.axis = scale_factor2 * 1 * hat(Particle.v)
     velocity_arrow_label.pos = velocity_arrow.axis + velocity_arrow.pos
     
-    Force_Coils_on_Particle_arrow.axis =  stauration_factor * hat(current_force) 
+    Force_Coils_on_Particle_arrow.axis =  scale_factor2 * hat(current_force) 
     Force_Coils_on_Particle_arrow_label.pos = Force_Coils_on_Particle_arrow.axis + Force_Coils_on_Particle_arrow.pos
     
     t += dt
