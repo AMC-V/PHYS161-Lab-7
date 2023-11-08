@@ -114,7 +114,7 @@ Particle.v = vec(12.3, 0, 25) # 0, -10.5, 14
 
 # region Constants for Coil
 R = 5  # Radius of the Coil
-N = 12 # This tells us how many pieces will be in the Coil
+N = 50 # This tells us how many pieces will be in the Coil, 12
 POI = Particle.pos       # Our point of interest, Specific place we care about
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
 F_Total = vec(0, 0, 0)   # WIll hold the current force 
@@ -182,7 +182,7 @@ def create_positions_list(starting_angle, ending_angle, d_theta, z_position, Rad
 # Method to create a Coil, it can be positioned in z direction, x & y are locked
 def create_coil(position_list, Radius, Coil_name):
     current_in_coil = [] # Made up from the currents in Coil
-    Coil_visual = ring(pos = vec(0, 0, position_list[0].z), axis = vec(0, 0, 1), radius = Radius * 0.95)
+    Coil_visual = ring(pos = vec(0, 0, position_list[0].z), axis = vec(0, 0, 1), radius = Radius)
     Coil_visual.thickness = 0.2
     Coil_visual.opacity = 0.4
     Coil_visual.texture = vp.textures.metal
@@ -234,6 +234,8 @@ currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # endregion
 
 # region Animation of Particle
+
+
 t = 0
 dt = 1e-4 # -9
 sim_speed = 1e5
@@ -249,7 +251,7 @@ while True:
     # Adding both fields
     current_B_field_Total = current_B_field_1 + current_B_field_2
     
-    print(f'B experimetal is ({(current_B_field_Total)})')
+    #print(f'B experimetal is ({(current_B_field_Total)})')
     
     #break
     
