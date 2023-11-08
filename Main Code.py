@@ -234,8 +234,6 @@ currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # endregion
 
 # region Animation of Particle
-
-
 t = 0
 dt = 1e-4 # -9
 sim_speed = 1e5
@@ -278,3 +276,4 @@ while True:
     t += dt
 
 # endregion
+
