@@ -178,7 +178,7 @@ def create_positions_list(starting_angle, ending_angle, d_theta, z_position, Rad
         
     return position_list # Return a position list
 
-# Method to create a Coil, it can be positioned in z direction, x & y are locked
+# Method to create a Coil along with current arrows, x & y position are locked
 def create_coil(position_list, Radius, Coil_name):
     current_in_coil = [] # Made up from the currents in Coil
     Coil_visual = ring(pos = vec(0, 0, position_list[0].z), axis = vec(0, 0, 1), radius = Radius)
@@ -206,7 +206,7 @@ def create_coil(position_list, Radius, Coil_name):
     
     return current_in_coil
 
-# Method to calculate the magnetic field total from a Coil at a specific point
+# Method to calculate the magnetic field from a Coil at a specific position
 def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
     B_Total_Temp = vec(0, 0, 0) # Will hold the magnetic field contribution from all the currents in Coil
     
