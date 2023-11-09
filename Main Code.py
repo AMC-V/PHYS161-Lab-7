@@ -131,6 +131,7 @@ angle_tot = theta_max - theta_min # The total angle the Coil will have
 dtheta = angle_tot / (N - 1)      # A small bit of angle
 ds = R * dtheta                   # A small bit of arc lenght
 constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral of ds cross r vec / r mag
+theta_low = theta_min + dtheta/2  # This determines where the coil will start
 # endregion
 
 # region Total Magnetic Field Arrow at one point and Force Arrow
@@ -228,12 +229,13 @@ def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
 # endregion
 
 # region BUILDING Position list + Coils + current arrows
-# List to hold positions generated for each arrow
-positions_list_1 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, -10, R) 
-# Making Coil with its currents
+# Make a list to hold positions generated for each arrow
+positions_list_1 = create_positions_list(theta_low, theta_max, dtheta, -10, R)
+ 
+# Make Coil and a list that will hold all the currents inside the Coil
 currents_in_Coil_List_1 = create_coil(positions_list_1, R, 'Coil_1')
 
-positions_list_2 = create_positions_list(theta_min + dtheta/2, theta_max, dtheta, 10, R)
+positions_list_2 = create_positions_list(theta_low, theta_max, dtheta, 10, R)
 currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # endregion
 
