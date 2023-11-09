@@ -208,16 +208,23 @@ def create_coil(position_list, Radius, Coil_name):
 
 # Method to calculate the magnetic field from a Coil at a specific position
 def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
-    B_Total_Temp = vec(0, 0, 0) # Will hold the magnetic field contribution from all the currents in Coil
+    
+    # Holds the Magnetic field contributions from all the currents in Coil
+    B_Total_Temp = vec(0, 0, 0) 
     
     # Loop will go through all the positions (representing current) in the coil    
     for my_current_arrow in current_in_coil_list:
-        r = my_POI - my_current_arrow.pos # Get vector from a current in the Coil to point of interest
-        ds = my_current_arrow.axis  - my_current_arrow.pos # vector a small amount of distance pointed in dir of current
         
-        B_Total_Temp += constant * cross(ds,r) / mag(r)**3 # db added to the total b field in POI
+        # Gets vector from a current in the Coil to point of interest
+        r = my_POI - my_current_arrow.pos 
         
-    return B_Total_Temp
+        # Gets a vector that represents a small amount of distance pointed in the direction of a current
+        ds = my_current_arrow.axis - my_current_arrow.pos 
+        
+        # Stores a small amount of B field generated from a current in the Coil
+        B_Total_Temp += constant * cross(ds,r) / mag(r)**3 
+        
+    return B_Total_Temp # Returns the total B field from a Coil at the current POI
 # endregion
 
 # region BUILDING Position list + Coils + current arrows
