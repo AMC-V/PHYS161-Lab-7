@@ -135,11 +135,11 @@ theta_low = theta_min + dtheta/2  # This determines where the coil will start
 # endregion
 
 # region Total Magnetic Field Arrow at one point and Force Arrow
-Force_Coils_on_Particle_arrow = arrow(pos = Particle.pos, axis = F_Total)
-Force_Coils_on_Particle_arrow.color = vec(0, 1, 0) # Green
-Force_Coils_on_Particle_arrow.opacity = 0.5
+Force_on_Particle_arrow = arrow(pos = Particle.pos, axis = F_Total)
+Force_on_Particle_arrow.color = vec(0, 1, 0) # Green
+Force_on_Particle_arrow.opacity = 0.5
 
-Force_Coils_on_Particle_arrow_label = vp.label(pos = Force_Coils_on_Particle_arrow.axis, text = '<i>F</i>', 
+Force_on_Particle_arrow_label = vp.label(pos = Force_on_Particle_arrow.axis, text = '<i>F</i>', 
     height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
     box = False)
 
@@ -242,35 +242,30 @@ currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 # endregion
 
 # region Animation of Particle
-t = 0
-dt = 1e-4 # -9
+t = 0 # Total runtime
+dt = 1e-4 # Time step
 sim_speed = 1e5
-
 
 while True:
     rate(sim_speed/dt)
     
     # First time the particle's position will be vec(0, 0, 0)
-    current_B_field_1 = current_magnetic_field_from_coil(currents_in_Coil_List_1, Particle.pos) # Magnetic field from Coil 1
-    current_B_field_2 = current_magnetic_field_from_coil(currents_in_Coil_List_2, Particle.pos) # Magnetic field from Coil 2
+    # Magnetic field from Coil 1
+    current_B_field_1 = current_magnetic_field_from_coil(currents_in_Coil_List_1, Particle.pos)
+    
+    # Magnetic field from Coil 2
+    current_B_field_2 = current_magnetic_field_from_coil(currents_in_Coil_List_2, Particle.pos) 
     
     # Adding both fields
     current_B_field_Total = current_B_field_1 + current_B_field_2
-    
-    #print(f'B experimetal is ({(current_B_field_Total)})')
-    
-    #break
     
     current_force = Particle.q * cross(Particle.v, current_B_field_Total)
 
     Particle.a = current_force / Particle.m
     Particle.v += Particle.a * dt
     Particle.pos += Particle.v * dt
-        
-    if Particle.v == vec(0, 0, 0):
-        Force_Coils_on_Particle_arrow.opacity = 0
 
-    B_Total_arrow.pos = Force_Coils_on_Particle_arrow.pos = velocity_arrow.pos = Particle.pos
+    B_Total_arrow.pos = Force_on_Particle_arrow.pos = velocity_arrow.pos = Particle.pos
 
     B_Total_arrow.axis =  current_B_field_Total * scale_factor * 5
     B_Total_arrow_label.pos = B_Total_arrow.axis + B_Total_arrow.pos
@@ -278,8 +273,8 @@ while True:
     velocity_arrow.axis = scale_factor2 * 1 * hat(Particle.v)
     velocity_arrow_label.pos = velocity_arrow.axis + velocity_arrow.pos
     
-    Force_Coils_on_Particle_arrow.axis =  scale_factor2 * hat(current_force) 
-    Force_Coils_on_Particle_arrow_label.pos = Force_Coils_on_Particle_arrow.axis + Force_Coils_on_Particle_arrow.pos
+    Force_on_Particle_arrow.axis =  scale_factor2 * hat(current_force) 
+    Force_on_Particle_arrow_label.pos = Force_on_Particle_arrow.axis + Force_on_Particle_arrow.pos
     
     t += dt
 
