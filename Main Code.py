@@ -2,6 +2,7 @@
 
 # region Imports
 import vpython as vp
+import sys
 # endregion
 
 # region compatablaility methods from VCcode to Growscript, Don't add these to Glowscript
@@ -100,14 +101,20 @@ neg_z_axis_label = vp.label(pos = neg_z_axis.pos + neg_z_axis.axis + vec(0, -axi
          text='-z', height = 16, border = 4,font = axis.f, line = False, opacity = 0, box = False)
 # endregion
 
-# region Particle Creation
-Particle = sphere(pos = origin + vec(0, 0.57, 0), radius = 0.1) # 0,.11,7.1
-Particle.trail_radius = 0.01
-Particle.color = vec(0, 0.5, 1)
-Particle.q = 1.602e-19 # C, charge of a proton
-Particle.m = 1.673e-27 # Kg, mass of a proton
-Particle.a = vec(0, 0, 0)
-Particle.v = vec(12.3, 0, 25) # 0, -10.5, 14
+# region Method for Particle Creation
+def create_particle(start_location, size, velocity):   
+    Particle_ = sphere(pos = origin + start_location, radius = size) # 0,.11,7.1
+    Particle_.trail_radius = 0.01
+    Particle_.color = vec(0, 0.5, 1)
+    Particle_.q = 1.602e-19 # C, charge of a proton
+    Particle_.m = 1.673e-27 # Kg, mass of a proton
+    Particle_.a = vec(0, 0, 0)
+    Particle_.v = velocity # 0, -10.5, 14
+    
+    return Particle_
+    
+Particle_1 = create_particle(vec(0, 0.57, 0), 0.1, vec(12.3, 10, 25))
+Particle_2 = create_particle(vec(0.5, 0, -1), 0.1, vec(12.3, 7, -10))
 # endregion
 
 # region Coil Creation
@@ -115,7 +122,7 @@ Particle.v = vec(12.3, 0, 25) # 0, -10.5, 14
 # region Constants for Coil
 R = 5  # Radius of the Coil
 N = 50 # This tells us how many pieces will be in the Coil, 12
-POI = Particle.pos       # Our point of interest, Specific place we care about
+POI = Particle_1.pos       # Our point of interest, Specific place we care about
 mu_0 = 4*pi()*1e-7       # Constant in back of book of mu
 current = 10             # positive implies current CCW, negative CW
 B_Total = vec(0, 0, 0)   # Will hold the total magnetic field
@@ -134,33 +141,50 @@ constant = mu_0 * current/4/pi()  # This is from the eq B = mu*I/Area integral o
 theta_low = theta_min + dtheta/2  # This determines where the coil will start
 # endregion
 
-# region Total Magnetic Field Arrow at one point and Force Arrow
-Force_on_Particle_arrow = arrow(pos = Particle.pos, axis = F_Total)
-Force_on_Particle_arrow.color = vec(0, 1, 0) # Green
-Force_on_Particle_arrow.opacity = 0.5
+# region Total Magnetic Field and Force Arrow Method
+def create_arrows(Particle_):
+    arrows_list = []
+    
+    Force_on_Particle_arrow_ = arrow(pos = Particle_.pos, axis = origin)
+    Force_on_Particle_arrow_.color = vec(0, 1, 0) # Green
+    Force_on_Particle_arrow_.opacity = 0.5
+    
+    arrows_list.append(Force_on_Particle_arrow_)
 
-Force_on_Particle_arrow_label = vp.label(pos = Force_on_Particle_arrow.axis, text = '<i>F</i>', 
-    height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
-    box = False)
+    Force_on_Particle_arrow_label_ = vp.label(pos = Force_on_Particle_arrow_.axis, text = '<i>F</i>', 
+        height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
+        box = False)
+    
+    arrows_list.append(Force_on_Particle_arrow_label_)
 
-velocity_arrow = arrow(pos = Particle.pos, axis = Particle.v)
-velocity_arrow.color = vec(1, 1, 1) # White
-velocity_arrow.opacity = 0.3
+    velocity_arrow_ = arrow(pos = Particle_.pos, axis = Particle_1.v)
+    velocity_arrow_.color = vec(1, 1, 1) # White
+    velocity_arrow_.opacity = 0.3
+    
+    arrows_list.append(velocity_arrow_)
 
-velocity_arrow_label = vp.label(pos = velocity_arrow.axis, text = '<i>V</i>', 
-    height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
-    box = False)
+    velocity_arrow_label_ = vp.label(pos = velocity_arrow_.axis, text = '<i>V</i>', 
+        height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
+        box = False)
+    
+    arrows_list.append(velocity_arrow_label_)
 
-B_Total_arrow = arrow(pos = Particle.pos, axis = B_Total * scale_factor)
-B_Total_arrow.color = vec(0.627, 0.125, 0.941) # Purple 
-B_Total_arrow.opacity = 0.5
+    B_Total_arrow_ = arrow(pos = Particle_.pos, axis = origin * scale_factor)
+    B_Total_arrow_.color = vec(0.627, 0.125, 0.941) # Purple 
+    B_Total_arrow_.opacity = 0.5
+    
+    arrows_list.append(B_Total_arrow_)
 
-B_Total_arrow_label = vp.label(pos = B_Total_arrow.axis, text = '<i>B</i>', 
-    height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
-    box = False)
+    B_Total_arrow_label_ = vp.label(pos = B_Total_arrow_.axis, text = '<i>B</i>', 
+        height = 16, border = 4, font = 'monospace', line = False, opacity = 0, 
+        box = False)
+    
+    arrows_list.append(B_Total_arrow_label_)
+    
+    return arrows_list
 # endregion
 
-# region Methods
+# region Methods for Coil, Boundary, and Magentic field
 # Method to generate the position of all the current arrows in a Coil
 def create_positions_list(starting_angle, ending_angle, d_theta, z_position, Radius):
     position_list = [] # List to hold positions generated for each arrow
@@ -226,22 +250,72 @@ def current_magnetic_field_from_coil(current_in_coil_list, my_POI):
         B_Total_Temp += constant * cross(ds,r) / mag(r)**3 
         
     return B_Total_Temp # Returns the total B field from a Coil at the current POI
+
+# Method to create bounds visual on particle
+def create_bounds(start_position, end_position, Radius):
+    bound = cylinder(pos = vec(0, 0, start_position[0].z), axis = vec(0, 0, 2*end_position[0].z), color = vec(1, 1, 1))
+    bound.radius = Radius
+    bound.opacity = 0.1
+    
+def bounds_check(current_position, position_list_1, position_list_2):
+    if mag(vec(current_position.x, current_position.y, 0))  >= mag(vec(position_list_1[0].x, position_list_1[0].y, 0)):
+        print("r escape")
+        sys.exit(0)
+        
+    elif current_position.z < position_list_1[0].z or current_position.z > position_list_2[0].z:
+        print("z escape")
+        sys.exit(0)
 # endregion
 
 # region BUILDING Position list + Coils + current arrows
-# Make a list to hold positions generated for each arrow
-positions_list_1 = create_positions_list(theta_low, theta_max, dtheta, -10, R)
- 
-# Make Coil and a list that will hold all the currents inside the Coil
-currents_in_Coil_List_1 = create_coil(positions_list_1, R, 'Coil_1')
+positions_list_1 = create_positions_list(theta_low, theta_max, dtheta, -10, R) # Make a list to hold positions generated for each arrow
+currents_in_Coil_List_1 = create_coil(positions_list_1, R, 'Coil_1') # Make Coil and a list that will hold all the currents inside the Coil
 
 positions_list_2 = create_positions_list(theta_low, theta_max, dtheta, 10, R)
 currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
+
+
+arrow_list_1 = create_arrows(Particle_1)
+arrow_list_2 = create_arrows(Particle_2)
+create_bounds(positions_list_1, positions_list_2, R)
 # endregion
 
 # endregion
 
-# region Animation of Particle
+# region Animation
+
+def single_timestep_calculation(Particle_, arrow_list_, dt_):
+    # First time the particle's position will be vec(0, 0, 0)
+    # Magnetic field from Coil 1
+    current_B_field_1 = current_magnetic_field_from_coil(currents_in_Coil_List_1, Particle_.pos)
+    
+    # Magnetic field from Coil 2
+    current_B_field_2 = current_magnetic_field_from_coil(currents_in_Coil_List_2, Particle_.pos) 
+    
+    # Adding both fields
+    current_B_field_Total = current_B_field_1 + current_B_field_2
+    
+    current_force = Particle_.q * cross(Particle_.v, current_B_field_Total)
+
+    # CAHNGE COLOR OF FORCE ARROWS AND VELO
+
+    Particle_.a = current_force / Particle_.m
+    Particle_.v += Particle_.a * dt_
+    Particle_.pos += Particle_.v * dt_
+    
+    bounds_check(Particle_.pos, positions_list_1, positions_list_2)
+
+    arrow_list_[0].pos = arrow_list_[2].pos = arrow_list_[4].pos = Particle_.pos
+
+    arrow_list_[2].axis =  current_B_field_Total * scale_factor * 5
+    arrow_list_[3].pos = arrow_list_[2].axis + arrow_list_[2].pos
+   
+    arrow_list_[4].axis = scale_factor2 * 1 * hat(Particle_1.v)
+    arrow_list_[5].pos = arrow_list_[4].axis + arrow_list_[4].pos
+    
+    arrow_list_[0].axis =  scale_factor2 * hat(current_force) 
+    arrow_list_[1].pos = arrow_list_[0].axis + arrow_list_[0].pos
+
 t = 0 # Total runtime
 dt = 1e-4 # Time step
 sim_speed = 1e5
@@ -249,33 +323,9 @@ sim_speed = 1e5
 while True:
     rate(sim_speed/dt)
     
-    # First time the particle's position will be vec(0, 0, 0)
-    # Magnetic field from Coil 1
-    current_B_field_1 = current_magnetic_field_from_coil(currents_in_Coil_List_1, Particle.pos)
-    
-    # Magnetic field from Coil 2
-    current_B_field_2 = current_magnetic_field_from_coil(currents_in_Coil_List_2, Particle.pos) 
-    
-    # Adding both fields
-    current_B_field_Total = current_B_field_1 + current_B_field_2
-    
-    current_force = Particle.q * cross(Particle.v, current_B_field_Total)
-
-    Particle.a = current_force / Particle.m
-    Particle.v += Particle.a * dt
-    Particle.pos += Particle.v * dt
-
-    B_Total_arrow.pos = Force_on_Particle_arrow.pos = velocity_arrow.pos = Particle.pos
-
-    B_Total_arrow.axis =  current_B_field_Total * scale_factor * 5
-    B_Total_arrow_label.pos = B_Total_arrow.axis + B_Total_arrow.pos
+    single_timestep_calculation(Particle_1, arrow_list_1, dt)
+    single_timestep_calculation(Particle_2, arrow_list_2, dt)
    
-    velocity_arrow.axis = scale_factor2 * 1 * hat(Particle.v)
-    velocity_arrow_label.pos = velocity_arrow.axis + velocity_arrow.pos
-    
-    Force_on_Particle_arrow.axis =  scale_factor2 * hat(current_force) 
-    Force_on_Particle_arrow_label.pos = Force_on_Particle_arrow.axis + Force_on_Particle_arrow.pos
-    
     t += dt
 
 # endregion
