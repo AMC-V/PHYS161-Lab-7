@@ -115,6 +115,7 @@ def create_particle(start_location, size, velocity):
     
 Particle_1 = create_particle(vec(0, 0.57, 0), 0.1, vec(12.3, 10, 25))
 Particle_2 = create_particle(vec(0.5, 0, -1), 0.1, vec(12.3, 7, -10))
+Particle_3 = create_particle(vec(-1, 2, 1), 0.1, vec(1, -1, -1.2))
 # endregion
 
 # region Coil Creation
@@ -277,6 +278,7 @@ currents_in_Coil_List_2 = create_coil(positions_list_2, R, 'Coil 2')
 
 arrow_list_1 = create_arrows(Particle_1)
 arrow_list_2 = create_arrows(Particle_2)
+arrow_list_3 = create_arrows(Particle_3)
 create_bounds(positions_list_1, positions_list_2, R)
 # endregion
 
@@ -325,6 +327,7 @@ while True:
     
     single_timestep_calculation(Particle_1, arrow_list_1, dt)
     single_timestep_calculation(Particle_2, arrow_list_2, dt)
+    single_timestep_calculation(Particle_3, arrow_list_3, dt)
    
     t += dt
 
